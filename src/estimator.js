@@ -3,11 +3,11 @@ const covid19ImpactEstimator = () => {
   const dataOutPut = {
     data: {},
     estmate: {
-      impact:{}, 
-      severeImpact:{}
+      impact: {},
+      severeImpact: {}
     }
-  }; 
-  // input data to the estimator
+  };
+  //  input data to the estimator
   dataOutPut.data = {
     region: {
       name: 'Africa',
@@ -21,7 +21,7 @@ const covid19ImpactEstimator = () => {
     population: 92931687,
     totalHospitalBeds: 678874
   };
-  //Creating access to defferent objects of the inputData function 
+  // Creating access to defferent objects of the inputData function
   const reported = dataOutPut.data.reportedCases;
   let days = dataOutPut.data.timeToElapse;
   const period = dataOutPut.data.periodType;
@@ -33,10 +33,10 @@ const covid19ImpactEstimator = () => {
   if (period === 'months') {
     days *= 30;
     power = Math.trunc(days / 3);
-  }else if (period === 'weeks') {
+  } else if (period === 'weeks') {
     days *= 7;
     power = Math.trunc(days / 3);
-  }else if (period === 'days') {
+  } else if (period === 'days') {
     power = Math.trunc(days / 3);
   }
   // Initialising variables to be accessed for computations in impact and severeImpact functions
@@ -45,41 +45,40 @@ const covid19ImpactEstimator = () => {
   let severeCasesByRequestedTime;
   let hospitalBedsByRequestedTime;
   let casesForICUByRequestedTime;
-  let casesForVentilatorsByRequestedTime;
+  let casesForVentilators;
   let dollarsInFlight;
   // computations for the impact
   currentlyInfected = (reported * 10);
-  infectionsByRequestedTime = Math.trunc(currentlyInfected * Math.pow(2,power));
-  severeCasesByRequestedTime = Math.trunc((15/100) * infectionsByRequestedTime);
-  hospitalBedsByRequestedTime = Math.trunc(((35/100) * beds)-severeCasesByRequestedTime);
-  casesForICUByRequestedTime = Math.trunc((5/100) * infectionsByRequestedTime);
-  casesForVentilatorsByRequestedTime = Math.trunc((2/100) * infectionsByRequestedTime);
-  dollarsInFlight =Math.trunc((infectionsByRequestedTime * avgDailyIncomePopulation * avgDailyIncome) / days);
+  infectionsByRequestedTime = Math.trunc(currentlyInfected * (2 ** power));
+  severeCasesByRequestedTime = Math.trunc((15 / 100) * infectionsByRequestedTime);
+  hospitalBedsByRequestedTime = Math.trunc(((35 / 100) * beds) - severeCasesByRequestedTime);
+  casesForICUByRequestedTime = Math.trunc((5 / 100) * infectionsByRequestedTime);
+  casesForVentilators = Math.trunc((2 / 100) * infectionsByRequestedTime);
+  dollarsInFlight = Math.trunc((infectionsByRequestedTime * avgDailyIncomePopulation * avgDailyIncome) / days);
   dataOutPut.estmate.impact = {
     currentlyInfected,
     infectionsByRequestedTime,
     severeCasesByRequestedTime,
     hospitalBedsByRequestedTime,
     casesForICUByRequestedTime,
-    casesForVentilatorsByRequestedTime,
+    casesForVentilatorsByRequestedTime = casesForVentilators,
     dollarsInFlight
   };
-
   // computations for severeImpact
   currentlyInfected = (reported * 50);
-  infectionsByRequestedTime = Math.trunc(currentlyInfected * Math.pow(2,power));
-  severeCasesByRequestedTime = Math.trunc((15/100) * infectionsByRequestedTime);
-  hospitalBedsByRequestedTime = Math.trunc(((35/100 ) *beds)-severeCasesByRequestedTime);
-  casesForICUByRequestedTime = Math.trunc((5/100) * infectionsByRequestedTime);
-  casesForVentilatorsByRequestedTime = Math.trunc((2/100) * infectionsByRequestedTime);
-  dollarsInFlight =Math.trunc((infectionsByRequestedTime * avgDailyIncomePopulation * avgDailyIncome) / days);
+  infectionsByRequestedTime = Math.trunc(currentlyInfected * (2 ** power));
+  severeCasesByRequestedTime = Math.trunc((15 / 100) * infectionsByRequestedTime);
+  hospitalBedsByRequestedTime = Math.trunc(((35 / 100 ) *beds)-severeCasesByRequestedTime);
+  casesForICUByRequestedTime = Math.trunc((5 / 100) * infectionsByRequestedTime);
+  casesForVentilators = Math.trunc((2 / 100) * infectionsByRequestedTime);
+  dollarsInFlight = Math.trunc((infectionsByRequestedTime * avgDailyIncomePopulation * avgDailyIncome) / days);
   dataOutPut.estmate.severeImpact = {
     currentlyInfected,
     infectionsByRequestedTime,
     severeCasesByRequestedTime,
     hospitalBedsByRequestedTime,
     casesForICUByRequestedTime,
-    casesForVentilatorsByRequestedTime,
+    casesForVentilatorsByRequestedTime = casesForVentilators,
     dollarsInFlight
   };
   return dataOutPut;
