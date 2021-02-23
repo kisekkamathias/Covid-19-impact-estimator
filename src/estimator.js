@@ -22,11 +22,12 @@ const covid19ImpactEstimator = () => {
     totalHospitalBeds: 678874
   };
   // Creating access to defferent objects of the inputData function
-  let {
-   periodType, timeToElapse, reportedCases, totalHospitalBeds
-  } = dataOutPut.data;
   const {
-   avgDailyIncomeInUSD, avgDailyIncomePopulation
+    periodType, reportedCases, totalHospitalBeds
+  } = dataOutPut.data;
+  let timeToElapse = dataOutPut.data.reportedCases;
+  const {
+    avgDailyIncomeInUSD, avgDailyIncomePopulation
   } = dataOutPut.data.region;
   // Determine periodType when given days, weeks or months
   let power;
@@ -51,7 +52,8 @@ const covid19ImpactEstimator = () => {
   currentlyInfected = (reportedCases * 10);
   infectionsByRequestedTime = Math.trunc(currentlyInfected * (2 ** power));
   severeCasesByRequestedTime = Math.trunc((15 / 100) * infectionsByRequestedTime);
-  hospitalBedsByRequestedTime = Math.trunc(((35 / 100) * totalHospitalBeds) - severeCasesByRequestedTime);
+  hospitalBedsByRequestedTime = Math.trunc(((35 / 100)
+  * totalHospitalBeds) - severeCasesByRequestedTime);
   casesForICUByRequestedTime = Math.trunc((5 / 100) * infectionsByRequestedTime);
   casesForVentilatorsByRequestedTime = Math.trunc((2 / 100)
   * infectionsByRequestedTime);
@@ -70,11 +72,12 @@ const covid19ImpactEstimator = () => {
   currentlyInfected = (reportedCases * 50);
   infectionsByRequestedTime = Math.trunc(currentlyInfected * (2 ** power));
   severeCasesByRequestedTime = Math.trunc((15 / 100) * infectionsByRequestedTime);
-  hospitalBedsByRequestedTime = Math.trunc(((35 / 100) * totalHospitalBeds) - severeCasesByRequestedTime);
+  hospitalBedsByRequestedTime = Math.trunc(((35 / 100)
+  * totalHospitalBeds) - severeCasesByRequestedTime);
   casesForICUByRequestedTime = Math.trunc((5 / 100) * infectionsByRequestedTime);
   casesForVentilatorsByRequestedTime = Math.trunc((2 / 100)
   * infectionsByRequestedTime);
-  dollarsInFlight = Math.trunc((infectionsByRequestedTime 
+  dollarsInFlight = Math.trunc((infectionsByRequestedTime
   * avgDailyIncomePopulation * avgDailyIncomeInUSD) / timeToElapse);
   dataOutPut.estmate.severeImpact = {
     currentlyInfected,
