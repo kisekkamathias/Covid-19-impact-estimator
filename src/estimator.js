@@ -22,22 +22,22 @@ const covid19ImpactEstimator = () => {
     totalHospitalBeds: 678874
   };
   // Creating access to defferent objects of the inputData function
-  const reported = dataOutPut.data.reportedCases;
-  let days = dataOutPut.data.timeToElapse;
-  const period = dataOutPut.data.periodType;
-  const beds = dataOutPut.data.totalHospitalBeds;
-  const avgDailyIncome = dataOutPut.data.region.avgDailyIncomeInUSD;
-  const avgDailyIncomePopulation = dataOutPut.data.region.avgDailyIncomePopulation;
-  // Determine period when given days, weeks or months
+  let {
+   periodType, timeToElapse, reportedCases, totalHospitalBeds
+  } = dataOutPut.data;
+  const {
+   avgDailyIncomeInUSD, avgDailyIncomePopulation
+  } = dataOutPut.data.region;
+  // Determine periodType when given days, weeks or months
   let power;
-  if (period === 'months') {
-    days *= 30;
-    power = Math.trunc(days / 3);
-  } else if (period === 'weeks') {
-    days *= 7;
-    power = Math.trunc(days / 3);
-  } else if (period === 'days') {
-    power = Math.trunc(days / 3);
+  if (periodType === 'months') {
+    timeToElapse *= 30;
+    power = Math.trunc(timeToElapse / 3);
+  } else if (periodType === 'weeks') {
+    timeToElapse *= 7;
+    power = Math.trunc(timeToElapse / 3);
+  } else if (periodType === 'days') {
+    power = Math.trunc(timeToElapse / 3);
   }
   // Initialising variables to be accessed for computations in impact and severeImpact functions
   let currentlyInfected;
@@ -45,17 +45,18 @@ const covid19ImpactEstimator = () => {
   let severeCasesByRequestedTime;
   let hospitalBedsByRequestedTime;
   let casesForICUByRequestedTime;
-  let casesForVentilators;
+  let casesForVentilatorsByRequestedTime;
   let dollarsInFlight;
   // computations for the impact
-  currentlyInfected = (reported * 10);
+  currentlyInfected = (reportedCases * 10);
   infectionsByRequestedTime = Math.trunc(currentlyInfected * (2 ** power));
   severeCasesByRequestedTime = Math.trunc((15 / 100) * infectionsByRequestedTime);
-  hospitalBedsByRequestedTime = Math.trunc(((35 / 100) * beds) - severeCasesByRequestedTime);
+  hospitalBedsByRequestedTime = Math.trunc(((35 / 100) * totalHospitalBeds) - severeCasesByRequestedTime);
   casesForICUByRequestedTime = Math.trunc((5 / 100) * infectionsByRequestedTime);
   casesForVentilatorsByRequestedTime = Math.trunc((2 / 100)
   * infectionsByRequestedTime);
-  dollarsInFlight = Math.trunc((infectionsByRequestedTime * avgDailyIncomePopulation * avgDailyIncome) / days);
+  dollarsInFlight = Math.trunc((infectionsByRequestedTime
+  * avgDailyIncomePopulation * avgDailyIncomeInUSD) / timeToElapse);
   dataOutPut.estmate.impact = {
     currentlyInfected,
     infectionsByRequestedTime,
@@ -66,14 +67,15 @@ const covid19ImpactEstimator = () => {
     dollarsInFlight
   };
   // computations for severeImpact
-  currentlyInfected = (reported * 50);
+  currentlyInfected = (reportedCases * 50);
   infectionsByRequestedTime = Math.trunc(currentlyInfected * (2 ** power));
   severeCasesByRequestedTime = Math.trunc((15 / 100) * infectionsByRequestedTime);
-  hospitalBedsByRequestedTime = Math.trunc(((35 / 100 ) *beds)-severeCasesByRequestedTime);
+  hospitalBedsByRequestedTime = Math.trunc(((35 / 100) * totalHospitalBeds) - severeCasesByRequestedTime);
   casesForICUByRequestedTime = Math.trunc((5 / 100) * infectionsByRequestedTime);
   casesForVentilatorsByRequestedTime = Math.trunc((2 / 100)
   * infectionsByRequestedTime);
-  dollarsInFlight = Math.trunc((infectionsByRequestedTime * avgDailyIncomePopulation * avgDailyIncome) / days);
+  dollarsInFlight = Math.trunc((infectionsByRequestedTime 
+  * avgDailyIncomePopulation * avgDailyIncomeInUSD) / timeToElapse);
   dataOutPut.estmate.severeImpact = {
     currentlyInfected,
     infectionsByRequestedTime,
